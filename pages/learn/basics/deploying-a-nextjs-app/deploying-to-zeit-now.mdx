@@ -1,0 +1,29 @@
+import Layout from '../../../../components/learn/Layout';
+import AnswerBox from '../../../../components/learn/AnswerBox';
+
+export const meta = {
+  title: 'Deploying a Next.js App',
+  courseId: 'basics',
+  lessonId: 'deploying-a-nextjs-app',
+  stepId: 'deploying-to-zeit-now'
+};
+
+## Deploying to ▲ZEIT Now
+
+First, [download Now](https://zeit.co/download) if you do not already have it installed.
+
+Then, run the following command in the root directory of your app:
+
+```bash
+now
+```
+
+That's it!
+
+Your application is deployed to production.
+You'll see a URL printed in your terminal that your application is accessible at.
+
+To read more about what to do next, please visit [▲ZEIT Now's documentation](https://zeit.co/docs#related).
+You'll find topics ranging from integrating with Git to deploying with your own domain!
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>;

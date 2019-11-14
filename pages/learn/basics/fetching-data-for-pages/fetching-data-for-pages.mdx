@@ -1,0 +1,78 @@
+import Layout from '../../../../components/learn/Layout';
+import AnswerBox from '../../../../components/learn/AnswerBox';
+
+export const meta = {
+  title: 'Fetching Data for Pages',
+  courseId: 'basics',
+  lessonId: 'fetching-data-for-pages',
+  stepId: 'fetching-data-for-pages',
+  question: {
+    answers: [
+      'On server console',
+      'On browser console',
+      'On both consoles',
+      'Not printed on any console'
+    ],
+    correctAnswer: 'On browser console'
+  }
+};
+
+## Implement the Post Page
+
+Now let's add the detailed information about the TV show to the post.
+
+Replace `pages/p/[id].js` with the following content:
+
+```jsx
+import Layout from '../../components/MyLayout';
+import fetch from 'isomorphic-unfetch';
+
+const Post = props => (
+  <Layout>
+    <h1>{props.show.name}</h1>
+    <p>{props.show.summary.replace(/<[/]?[pb]>/g, '')}</p>
+    <img src={props.show.image.medium} />
+  </Layout>
+);
+
+Post.getInitialProps = async function(context) {
+  const { id } = context.query;
+  const res = await fetch(`https://api.tvmaze.com/shows/${id}`);
+  const show = await res.json();
+
+  console.log(`Fetched show: ${show.name}`);
+
+  return { show };
+};
+
+export default Post;
+```
+
+Have a look at the `getInitialProps` of that page:
+
+```jsx
+Post.getInitialProps = async function(context) {
+  const { id } = context.query;
+  const res = await fetch(`https://api.tvmaze.com/shows/${id}`);
+  const show = await res.json();
+
+  console.log(`Fetched show: ${show.name}`);
+
+  return { show };
+};
+```
+
+The first argument of the function is the **context** object. It has a `query` object that we can use to fetch information.
+
+In our example, we picked the show ID from `query` and used it to fetch the show data from the TVMaze API.
+
+---
+
+In this `getInitialProps` function, we have added a `console.log` to print the show title. Now we are going to see where it's going to print.
+
+Open both the server console and the client console.
+Then visit to the home page http://localhost:3000 and click on the first Batman show title.
+
+In what places have you seen the above mentioned `console.log` message?
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>;

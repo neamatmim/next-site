@@ -1,6 +1,8 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-
+import React, { Component } from 'react';
+import classNames from 'classnames';
+import { useAmp } from 'next/amp';
+import Head from 'next/head';
+import IObserver from './intersection-observer';
 
 // This component might look a little complex
 // because one could argue that keeping the aspect ratio
@@ -12,81 +14,159 @@ import PropTypes from 'prop-types'
 // ratio of the image's container BEFORE the image loads
 
 class Image extends Component {
-  static propTypes = {
-    width: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired
-  }
+  static defaultProps = {
+    lazy: true
+  };
+
+  state = {
+    src: !this.props.lazy ? this.props.videoSrc || this.props.src : undefined
+  };
+
+  handleIntersect = entry => {
+    if (entry.isIntersecting) {
+      this.setState({ src: this.props.videoSrc || this.props.src });
+    }
+  };
 
   render() {
     const {
       caption,
-      width,      
+      width,
       height,
+      isAmp,
       margin = 40,
       video = false,
+      videoSrc,
       captionSpacing = null,
       renderImage,
+      oversize = true,
+      float,
+      lazy,
       ...rest
-    } = this.props
+    } = this.props;
 
-    const aspectRatio = String(height / width * 100) + '%'
+    const aspectRatio = `${String((height / width) * 100)}%`;
 
     return (
-      <figure>
-        <main style={{ width }}>
-          <div style={{ paddingBottom: aspectRatio }}>
-            {video && <video
-              muted={true}
-              autoPlay={true}
-              loop={true}
-              playsInline={true}
-              {...rest}              
-            />}
-            {!video && !renderImage && <img {...rest} />}
-            {renderImage && renderImage(rest)}
+      <IObserver once onIntersect={this.handleIntersect} rootMargin="20%" disabled={!lazy}>
+        <figure
+          className={classNames({
+            oversize: width > 650,
+            float: float && width < 520
+          })}
+        >
+          <div className="container" style={{ width }}>
+            <div style={isAmp ? undefined : { paddingBottom: aspectRatio }}>
+              {isAmp ? (
+                videoSrc || video ? (
+                  <>
+                    <Head>
+                      <script
+                        key="amp-video"
+                        async
+                        custom-element="amp-video"
+                        src="https://cdn.ampproject.org/v0/amp-video-0.1.js"
+                      />
+                    </Head>
+                    <amp-video
+                      layout="responsive"
+                      src={rest.videoSrc || rest.src}
+                      width={width}
+                      height={height}
+                      muted="muted"
+                      autoPlay="autoplay"
+                      loop="loop"
+                    />
+                  </>
+                ) : (
+                  <amp-img
+                    layout="responsive"
+                    src={rest.src}
+                    width={width}
+                    height={height}
+                    alt={rest.alt}
+                  />
+                )
+              ) : this.state.src ? (
+                videoSrc || video ? (
+                  <video src={this.state.src} muted autoPlay loop playsInline />
+                ) : renderImage ? (
+                  renderImage(rest)
+                ) : (
+                  <img src={this.state.src || null} alt={rest.alt} />
+                )
+              ) : null}
+            </div>
+
+            {caption && (
+              <figcaption style={captionSpacing ? { marginTop: captionSpacing } : {}}>
+                {caption}
+              </figcaption>
+            )}
           </div>
 
-          {caption && (
-            <p style={captionSpacing ? { marginTop: captionSpacing } : {}}>
-              {caption}
-            </p>
-          )}
-        </main>
+          <style jsx>
+            {`
+              figure {
+                display: block;
+                text-align: center;
+                margin: ${margin}px 0;
+              }
+              .container {
+                margin: 0 auto;
+                max-width: 100%;
+              }
+              div {
+                transform: translate3d(0, 0, 0); /* Work around for Chrome bug */
+                position: relative;
+              }
+              figure :global(img),
+              figure :global(video) {
+                ${
+                  isAmp
+                    ? 'position: inherit;'
+                    : `
+                      height: 100%;
+                      left: 0;
+                      position: absolute;
+                      top: 0;
+                      width: 100%;
+                      `
+                };
+              }
+              figcaption {
+                color: #999;
+                font-size: 12px;
+                margin: 0;
+                text-align: center;
+              }
 
-        <style jsx>{`
-          figure {
-            display: block;
-            text-align: center;
-            margin: ${margin}px 0;
-            max-width: 100%;
-          }
-          main {
-            margin: 0 auto;
-            max-width: 100%;
-          }
-          div {
-            position: relative;
-          }
-          figure :global(img),
-          figure :global(video) {
-            height: 100%;
-            left: 0;
-            position: absolute;
-            top: 0;
-            width: 100%;
-          }
-          p {
-            color: #999;
-            font-size: 12px;
-            margin: 0;
-            text-align: center;
-          }
-        `}</style>
-      </figure>
-    )
+              @media (min-width: 1200px) {
+                figure.oversize {
+                  width: ${width}px;
+                  margin: ${margin}px 0 ${margin}px
+                    calc(((${width}px - 650px) / 2) * -1);
+                }
+                figure.float {
+                  float: ${float};
+                  margin: ${margin}px;
+                  margin-${float}: -150px;
+                }
+              }
+            `}
+          </style>
+        </figure>
+      </IObserver>
+    );
   }
 }
 
-export const Video = props => <Image {...props} video />
+export const Video = props => {
+  const isAmp = useAmp();
+  return <Image {...props} video isAmp={isAmp} />;
+};
 
-export default Image
+export default props => {
+  const isAmp = useAmp();
+  return <Image {...props} isAmp={isAmp} />;
+};

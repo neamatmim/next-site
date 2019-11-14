@@ -1,0 +1,44 @@
+import Layout from '../../../../components/learn/Layout';
+
+export const meta = {
+  title: 'TypeScript',
+  courseId: 'excel',
+  lessonId: 'typescript',
+  stepId: 'home-page',
+  question: {
+    answers: [
+      'Hello world! - user agent: {userAgent}',
+      'Hello world! - user agent: undefined',
+      '404 - This page could not be found',
+      'Failed to compile because of missing types'
+    ],
+    correctAnswer: 'Failed to compile because of missing types'
+  }
+};
+
+## Home Page
+
+Our `index.tsx` page is working without issues, but it's quite simple, let's add `getInitialProps` to it:
+
+```tsx
+const Home = ({ userAgent }) => <h1>Hello world! - user agent: {userAgent}</h1>;
+
+Home.getInitialProps = async ({ req }) => {
+  const userAgent = req ? req.headers['user-agent'] : navigator.userAgent;
+  return { userAgent };
+};
+
+export default Home;
+```
+
+Now if you go to [http://localhost:3000](http://localhost:3000/) you'll see the user agent used by the browser.
+
+Let's change the `strict` field in the `tsconfig.json` file that was generated for us, like so:
+
+```json
+"strict": true
+```
+
+Now restart the development server, so Next.js can use the updated `tsconfig.json`, and wait for the browser to reload. What's the output in the browser?
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>;

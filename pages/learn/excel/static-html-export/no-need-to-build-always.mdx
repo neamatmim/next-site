@@ -1,0 +1,36 @@
+import Layout from '../../../../components/learn/Layout';
+import AnswerBox from '../../../../components/learn/AnswerBox';
+
+export const meta = {
+  title: 'Export into a Static HTML App',
+  courseId: 'excel',
+  lessonId: 'static-html-export',
+  stepId: 'no-need-to-build-always',
+  question: {
+    answers: [
+      "It's not required for `next export`",
+      '`next export` invokes `next build` inside it',
+      'The page `/show/[id]` already exists in the build',
+      'The page `/show` already exists in the build'
+    ],
+    correctAnswer: 'The page `/show/[id]` already exists in the build'
+  }
+};
+
+## No Need to Always Build
+
+As you've seen, we can access the page without any issues. You can also access any of the other shows in `/`.
+
+The page `/show/[id]` can be used to generate an HTML file for every show. The exported HTML is totally controlled by the config we've added to `next.config.js`.
+
+In order to export the app, these are the commands we've invoked:
+
+```bash
+npm run export
+cd out
+serve -p 8080
+```
+
+As you can see, there's no `npm run build` command. Why is that?
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>;

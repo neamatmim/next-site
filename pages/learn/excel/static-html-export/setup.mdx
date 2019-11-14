@@ -1,0 +1,30 @@
+import Layout from '../../../../components/learn/Layout';
+
+export const meta = {
+  title: 'Export into a Static HTML App',
+  courseId: 'excel',
+  lessonId: 'static-html-export',
+  stepId: 'setup'
+};
+
+In this lesson, we need a simple Next.js app to play with. Try to download the example app below.
+(This is the blog app we created in previous lessons.)
+
+```bash
+git clone https://github.com/zeit/next-learn-demo.git
+cd next-learn-demo
+cd E1-static-export
+```
+
+You can run it with:
+
+```bash
+npm install
+npm run dev
+```
+
+Now you can access the app by navigating to http://localhost:3000/.
+
+> The example uses [Dynamic Routing](https://nextjs.org/docs/#dynamic-routing), you may want to check the [Create Dynamic Pages lesson](https://nextjs.org/learn/basics/create-dynamic-pages) first.
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>;

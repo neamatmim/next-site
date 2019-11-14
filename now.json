@@ -1,36 +1,54 @@
 {
-  "alias": "nextjsorg.now.sh",
-  "type": "static",
-  "static": {
-    "directoryListing": false,
-    "headers": [
-      {
-        "source": "/_next/webpack/chunks/*",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "public, max-age=31536000, immutable"
-          }
-        ]
-      },
-      {
-        "source": "/_next/static/commons/**",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "public, max-age=31536000, immutable"
-          }
-        ]
-      },
-      {
-        "source": "/_next/*/page/**/*.js",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "public, max-age=31536000, immutable"
-          }
-        ]
+  "version": 2,
+  "env": {
+    "ROOT_URL": "https://nextjs.org",
+    "ACCESS_TOKEN_SECRET": "@next-learn-access-token-secret",
+    "GITHUB_CLIENT_ID": "@next-learn-github-client-id",
+    "GITHUB_CLIENT_SECRET": "@next-learn-github-client-secret",
+    "AIRTABLE_API_KEY": "@airtable_key"
+  },
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@now/next@canary"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/learn/?",
+      "status": 301,
+      "headers": { "Location": "/learn/basics/getting-started" }
+    },
+    {
+      "src": "/learn/basics/server-side-support-for-clean-urls/?",
+      "status": 301,
+      "headers": { "Location": "/learn/basics/clean-urls-with-dynamic-routing" }
+    },
+    {
+      "src": "/learn/excel/automatic-prerendering/?",
+      "status": 301,
+      "headers": { "Location": "/learn/excel/automatic-static-optimization" }
+    },
+    {
+      "src": "/features/?",
+      "status": 301,
+      "headers": { "Location": "/features/static-exporting" }
+    },
+    {
+      "src": "/features/ssr/?",
+      "status": 301,
+      "headers": { "Location": "/features/server-side-rendering" }
+    },
+    {
+      "src": "/case-studies/?",
+      "status": 301,
+      "headers": {
+        "Location": "/case-studies/hulu"
       }
-    ]
-  }
+    },
+    {
+      "src": "/feed.xml",
+      "dest": "/_next/static/feed.xml"
+    }
+  ]
 }

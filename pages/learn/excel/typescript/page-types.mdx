@@ -1,0 +1,33 @@
+import Layout from '../../../../components/learn/Layout';
+
+export const meta = {
+  title: 'TypeScript',
+  courseId: 'excel',
+  lessonId: 'typescript',
+  stepId: 'page-types'
+};
+
+## Page Types
+
+Our `index.tsx` page is complaining about missing types, it makes total sense because we're not telling TypeScript that it's a Next.js page and implicit `any` types are unallowed in `strict` mode.
+
+Let's add the `NextPage` type to `Home`:
+
+```tsx
+import { NextPage } from 'next';
+
+const Home: NextPage<{ userAgent: string }> = ({ userAgent }) => (
+  <h1>Hello world! - user agent: {userAgent}</h1>
+);
+
+Home.getInitialProps = async ({ req }) => {
+  const userAgent = req ? req.headers['user-agent'] || '' : navigator.userAgent;
+  return { userAgent };
+};
+
+export default Home;
+```
+
+Now if you go to [http://localhost:3000](http://localhost:3000/) you should be able to see the home page with the user agent displayed!
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>;

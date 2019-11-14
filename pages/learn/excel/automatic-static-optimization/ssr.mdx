@@ -1,0 +1,45 @@
+import Layout from '../../../../components/learn/Layout';
+import AnswerBox from '../../../../components/learn/AnswerBox';
+
+export const meta = {
+  title: 'Automatic Static Optimization',
+  courseId: 'excel',
+  lessonId: 'automatic-static-optimization',
+  stepId: 'ssr',
+  question: {
+    answers: [
+      'It is missing from the build output',
+      'It was compiled to σ (Server)',
+      'It was compiled to ⚡(Static File)',
+      'Error: Agent is undefined'
+    ],
+    correctAnswer: 'It was compiled to σ (Server)'
+  }
+};
+
+## Server Side Rendering
+
+Let's add a new page called `pages/agent.js` that uses SSR to retrieve the user agent:
+
+```jsx
+const Agent = ({ userAgent }) => <h1>Your user agent is: {userAgent}</h1>;
+
+Agent.getInitialProps = async ({ req }) => {
+  const userAgent = req ? req.headers['user-agent'] : navigator.userAgent;
+  return { userAgent };
+};
+
+export default Agent;
+```
+
+Our new page is very similar to `pages/index.js` but now we're also adding `getInitialProps`, which will add dynamic data to the page before render.
+
+Now let's build our app again:
+
+```bash
+npm run build
+```
+
+What happened in the compilation of `agent.js`?
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>;

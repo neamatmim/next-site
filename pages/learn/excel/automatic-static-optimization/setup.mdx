@@ -1,0 +1,59 @@
+import Layout from '../../../../components/learn/Layout';
+import AnswerBox from '../../../../components/learn/AnswerBox';
+
+export const meta = {
+  title: 'Automatic Static Optimization',
+  courseId: 'excel',
+  lessonId: 'automatic-static-optimization',
+  stepId: 'setup',
+  question: {
+    answers: [
+      'The build finished successfully and the `dist` folder was created',
+      'Error: No Pages to build',
+      'The build finished successfully and the `.next` folder was created',
+      'A development server started in localhost:3000'
+    ],
+    correctAnswer: 'The build finished successfully and the `.next` folder was created'
+  }
+};
+
+## Setup
+
+To start, create a sample project by running the following commands:
+
+```bash
+mkdir hello-next
+cd hello-next
+npm init -y
+npm install --save react react-dom next
+mkdir pages
+```
+
+Now open `package.json` in the `hello-next` directory and replace `scripts` with the following:
+
+```json
+{
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  }
+}
+```
+
+Let's now add our first page to `pages/index.js`:
+
+```jsx
+const Index = () => <h1>Hello World</h1>;
+export default Index;
+```
+
+We now have a working app, let's build it with `next build`:
+
+```bash
+npm run build
+```
+
+What happened after you built the app?
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>;

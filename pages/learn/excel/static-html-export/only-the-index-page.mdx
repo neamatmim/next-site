@@ -1,0 +1,32 @@
+import Layout from '../../../../components/learn/Layout';
+
+export const meta = {
+  title: 'Export into a Static HTML App',
+  courseId: 'excel',
+  lessonId: 'static-html-export',
+  stepId: 'only-the-index-page'
+};
+
+## Only the Index Page
+
+As you experienced, you'll get a `404` page. You get it when you try to access the page directly. You can see the same behavior for any other page except the index page (`/`).
+
+This is what's happening here:
+
+You can access all the pages via client side since the app loads the relevant JavaScript content. But when you try to load it directly, it has no HTML content to serve.
+
+That's because we asked Next.js to export only the index (`/`) page.
+
+Have a look at the config we've added:
+
+```js
+module.exports = {
+  exportPathMap: function() {
+    return {
+      '/': { page: '/' }
+    };
+  }
+};
+```
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>;

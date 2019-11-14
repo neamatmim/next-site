@@ -1,0 +1,80 @@
+import Layout from '../../../../components/learn/Layout';
+import AnswerBox from '../../../../components/learn/AnswerBox';
+
+export const meta = {
+  title: 'Export into a Static HTML App',
+  courseId: 'excel',
+  lessonId: 'static-html-export',
+  stepId: 'export-the-index-page',
+  question: {
+    answers: [
+      'A page with the usual page content',
+      'An empty page but `404: Not Found` in the browser console',
+      'A page with `404 This page could not be found` as the content',
+      'A page with `500 Internal Error` as the content'
+    ],
+    correctAnswer: 'A page with `404 This page could not be found` as the content'
+  }
+};
+
+## Export the Index Page
+
+Now we are going to export our index page (`pages/index.js`) as a static HTML page.
+
+First of all, create a file called `next.config.js` in the root of your app and add the following content:
+
+```js
+module.exports = {
+  exportPathMap: function() {
+    return {
+      '/': { page: '/' }
+    };
+  }
+};
+```
+
+Then open `package.json` and replace `scripts` with the following:
+
+```json
+"scripts": {
+  "build": "next build",
+  "export": "next export"
+}
+```
+
+Then run the following commands:
+
+```bash
+npm run build
+npm run export
+```
+
+Now you can see the exported HTML content on a directory called `out` inside your project.
+
+That's a fully functioning static web app. You can deploy it to any static hosting service, and it will work fine.
+But before we do that, we need to test it out locally.
+
+In order to test the app, install the following [serve](https://www.npmjs.com/package/serve) NPM module globally:
+
+```bash
+npm install -g serve
+```
+
+> `serve` is a pretty simple static web server. You can also use any other similar tool.
+> But to make things simple, use `serve` for this lesson.
+
+After you've installed `serve`, run following commands from the root folder:
+
+```bash
+cd out
+serve -p 8080
+```
+
+Now you can access your static app in http://localhost:8080.
+Everything should be working as usual.
+
+Now try to visit this page: http://localhost:8080/show/975
+
+How do you describe the output?
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>;

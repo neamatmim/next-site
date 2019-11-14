@@ -1,0 +1,74 @@
+import Layout from '../../../../components/learn/Layout';
+import AnswerBox from '../../../../components/learn/AnswerBox';
+
+export const meta = {
+  title: 'Export into a Static HTML App',
+  courseId: 'excel',
+  lessonId: 'static-html-export',
+  stepId: 'exporting-other-pages',
+  question: {
+    answers: [
+      'The expected page content',
+      'An empty page but `404: Not Found` in the browser console',
+      'A page with `404 This page could not be found` as the content',
+      'A page with `500 Internal Error` as the content'
+    ],
+    correctAnswer: 'The expected page content'
+  }
+};
+
+## Exporting Other Pages
+
+Now, let's try to export all the other pages as well.
+
+For that, add the following content to the `next.config.js` file:
+
+```js
+const fetch = require('isomorphic-unfetch');
+
+module.exports = {
+  exportPathMap: async function() {
+    const paths = {
+      '/': { page: '/' },
+      '/about': { page: '/about' }
+    };
+    const res = await fetch('https://api.tvmaze.com/search/shows?q=batman');
+    const data = await res.json();
+    const shows = data.map(entry => entry.show);
+
+    shows.forEach(show => {
+      paths[`/show/${show.id}`] = { page: '/show/[id]', query: { id: show.id } };
+    });
+
+    return paths;
+  }
+};
+```
+
+As is shown in the above config, the `/about` path is very similar to the `/` path. But for the shows we do something a bit different.
+
+Here's what's going on:
+
+To render the shows in our app, we first fetch the list of shows, this is the same fetch we do in `/`. We then loop the shows and add a new path and query for every one of them.
+
+For example for the show of `Batman` with the id `975` the loop will add the following path:
+
+```js
+'/show/975': { page: '/show/[id]', query: { id: '975' } }
+```
+
+The page `/show/[id]` will then use the `query` object to get the `id` and fetch more info about the show.
+
+Now close the existing app running with serve and run the following commands in the root folder:
+
+```bash
+npm run export
+cd out
+serve -p 8080
+```
+
+Now try to access this page: http://localhost:8080/show/975
+
+What's the output in the browser?
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>;

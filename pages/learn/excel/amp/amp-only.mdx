@@ -1,0 +1,32 @@
+import Layout from '../../../../components/learn/Layout';
+
+export const meta = {
+  title: 'Build an AMP only Page',
+  courseId: 'excel',
+  lessonId: 'amp',
+  stepId: 'amp-only',
+  question: {
+    answers: [
+      'Use page.amp.js',
+      'Use page-amp.js',
+      'Add `export const config = { amp: true }`',
+      'Set AMP mode in your next.config'
+    ],
+    correctAnswer: 'Add `export const config = { amp: true }`'
+  }
+};
+
+You can create an AMP only page by exporting `amp: true` in the `config` object, here's how:
+
+```jsx
+// pages/index.js
+export const config = { amp: true };
+
+export default function Index(props) {
+  return <p>Welcome to the AMP only Index page!!</p>;
+}
+```
+
+How do you make an AMP only page?
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>;

@@ -1,0 +1,23 @@
+import Layout from '../../../../components/learn/Layout';
+
+export const meta = {
+  title: 'Export into a Static HTML App',
+  courseId: 'excel',
+  lessonId: 'static-html-export',
+  stepId: 'deploying-the-app'
+};
+
+## Deploying the App
+
+Deploying the app is pretty simple. Simply visit the "out" directory and deploy it to your favorite static hosting service.
+
+If you are using [ZEIT now](https://zeit.co/now), this is how to do it:
+
+```bash
+cd out
+now
+```
+
+![](https://assets.zeit.co/image/upload/v1564595640/nextjs/learn/static-now-2.png)
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>;

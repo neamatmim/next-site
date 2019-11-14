@@ -1,67 +1,83 @@
-import PermalinkIcon from '../icons/permalink'
+import GithubSlugger from 'github-slugger';
 
-class Heading extends React.Component {
-  render() {
-    const { component, className, children, ...rest } = this.props
-    return React.cloneElement(
-      component,
-      {
-        className: [className, component.props.className || ''].join(' '),
-        ...rest
-      },
-      children
-    )
-  }
+const PermalinkIcon = () => (
+  <span>
+    <svg viewBox="0 0 16 16" width="16" height="16">
+      <title>permalink</title>
+      <g strokeWidth="1" fill="#000000" stroke="#000000">
+        <path
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit="10"
+          d="M8.995,7.005 L8.995,7.005c1.374,1.374,1.374,3.601,0,4.975l-1.99,1.99c-1.374,1.374-3.601,1.374-4.975,0l0,0c-1.374-1.374-1.374-3.601,0-4.975 l1.748-1.698"
+        />
+        <path
+          fill="none"
+          stroke="#000000"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit="10"
+          d="M7.005,8.995 L7.005,8.995c-1.374-1.374-1.374-3.601,0-4.975l1.99-1.99c1.374-1.374,3.601-1.374,4.975,0l0,0c1.374,1.374,1.374,3.601,0,4.975 l-1.748,1.698"
+        />
+      </g>
+    </svg>
+  </span>
+);
+
+function Heading(props) {
+  const { component, className, children, ...rest } = props;
+  return React.cloneElement(
+    component,
+    {
+      className: [className, component.props.className || ''].join(' '),
+      ...rest
+    },
+    children
+  );
 }
 
 export default props => {
-  const { offsetTop } = props
-  const component = props.children
-  const children = component.props.children || ''
+  const { offsetTop } = props;
+  const component = props.children;
+  const children = component.props.children || '';
 
-  let id = props.id
-  let text = children
+  let id = props.id;
+  let text = children;
+
+  const slugger = new GithubSlugger();
 
   if (null == id) {
     // If there are sub components, convert them to text
     if (Array.isArray(children)) {
       text = children
         .map(child => {
-          return typeof child === 'object' ? child.props.children : child
+          return typeof child === 'object' ? child.props.children : child;
         })
-        .join('')
+        .join('');
     }
 
-    id = text.toLowerCase().replace(/\s/g, '-').replace(/[?!]/g, '')
+    id = slugger.slug(text);
   }
 
   const targetStyle =
-    null != offsetTop
-      ? { marginTop: -offsetTop + 'px', paddingTop: offsetTop + 'px' }
-      : null
+    null != offsetTop ? { marginTop: -offsetTop + 'px', paddingTop: offsetTop + 'px' } : null;
   return (
-    <Heading
-      className={props.lean ? 'lean' : ''}
-      component={component}
-      data-components-heading
-    >
-      <span id={id} className="target" style={targetStyle} />
-      <a href={'#' + id}>
-        {children}
-      </a>
+    <Heading className={props.lean ? 'lean' : ''} component={component} data-components-heading>
+      <span id={id} className="target docs-anchor-target" style={targetStyle} />
+      <a href={'#' + id}>{children}</a>
       <span className="permalink">
         <PermalinkIcon />
       </span>
       <style jsx>
         {`
           a {
-            border-bottom: 1px solid transparent;
             color: inherit;
-            text-decoration: none;
           }
 
           a:hover {
-            border-bottom-color: inherit;
+            color: inherit;
+            border-bottom: 1px dotted;
           }
 
           :global(h1[data-components-heading]) a::before {
@@ -87,10 +103,15 @@ export default props => {
             display: none;
           }
 
+          :global(h3[data-components-heading]) {
+            border-top: 1px solid #f3f3f3;
+            padding-top: 2rem;
+          }
+
           .target {
             display: block;
-            margin-top: -20px;
-            padding-top: 20px;
+            margin-top: -128px;
+            padding-top: 128px;
             visibility: hidden;
             position: absolute;
           }
@@ -118,5 +139,5 @@ export default props => {
         `}
       </style>
     </Heading>
-  )
-}
+  );
+};

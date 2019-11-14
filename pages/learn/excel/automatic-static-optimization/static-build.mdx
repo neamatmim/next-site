@@ -1,0 +1,21 @@
+import Layout from '../../../../components/learn/Layout';
+import AnswerBox from '../../../../components/learn/AnswerBox';
+
+export const meta = {
+  title: 'Automatic Static Optimization',
+  courseId: 'excel',
+  lessonId: 'automatic-static-optimization',
+  stepId: 'static-build'
+};
+
+## Static Build
+
+`next build` compiled the `index.js` page, you should have seen something like this:
+
+![](/static/images/prerender-build-output.png)
+
+`index.js` is the first page, handled by `⚡/`, it was compiled to a static HTML file because it doesn't require Server Side Rendering (SSR).
+
+_`_app`, `_document` and `_error` are internal pages of Next.js._
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>;

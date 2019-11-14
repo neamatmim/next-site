@@ -1,0 +1,63 @@
+import Layout from '../../../../components/learn/Layout';
+
+export const meta = {
+  title: 'TypeScript',
+  courseId: 'excel',
+  lessonId: 'typescript',
+  stepId: 'setup',
+  question: {
+    answers: [
+      'Error: tsconfig.json is required',
+      'The dev server started with a warning for missing tsconfig.json',
+      'The dev server started and a tsconfig.json file was created for me',
+      'Error: next.config.js is required'
+    ],
+    correctAnswer: 'The dev server started and a tsconfig.json file was created for me'
+  }
+};
+
+## Setup
+
+Let's start by creating a basic project with Next.js:
+
+```bash
+mkdir next-ts
+cd next-ts
+npm init -y
+npm install --save react react-dom next
+mkdir pages
+```
+
+Now let's add `TypeScript` and important `@types` we'll need:
+
+```bash
+npm install --save-dev typescript @types/react @types/node
+```
+
+Then, open the `package.json` file in the `next-ts` directory and replace `scripts` with the following:
+
+```json
+"scripts": {
+  "dev": "next",
+  "build": "next build",
+  "start": "next start"
+}
+```
+
+We'll also need a page to render, let's create `pages/index.tsx` with the following content:
+
+```tsx
+const Home = () => <h1>Hello world!</h1>;
+
+export default Home;
+```
+
+Now everything is ready. Run the following command to start the dev server:
+
+```bash
+npm run dev
+```
+
+What did Next.js show on the terminal output?
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>;

@@ -1,186 +1,271 @@
-import { Fragment, Component } from 'react'
-import { Code } from '../../components/docs/text/code.js'
-import _scrollIntoViewIfNeeded from 'scroll-into-view-if-needed'
+import GithubSlugger from 'github-slugger';
+import Header from '../header';
+import Navbar from '../navbar';
+import Container from '../container';
+import ArrowRight from '../icons/arrow-right';
 
-const navElements = [
-  "Setup",
-  "Automatic Code Splitting",
-  "CSS",
-  "Static file serving (e.g.: images)",
-  "Populating <head>",
-  "Fetching data and component lifecycle",
-  "Routing",
-  "Prefetching Pages",
-  "Custom server and routing",
-  "Dynamic Import",
-  "Custom <App>",
-  "Custom <Document>",
-  "Custom error handling",
-  "Reusing the built-in error page",
-  "Custom configuration",
-  "Customizing webpack config",
-  "Customizing babel config",
-  "Production deployment",
-  "Static HTML export",
-  "Multi Zones",
-  "Recipes",
-  "FAQ",
-  "Contributing"
-]
-
-const convertToSnakeCase = (string) => string.toLowerCase().replace(/\s+/g, '-').replace(/[?!]/g, '');
-
-function scrollIntoViewIfNeeded(elem, centerIfNeeded, options, config) {
-  const finalElement = findClosestScrollableElement(elem)
-  return _scrollIntoViewIfNeeded(
-    elem,
-    centerIfNeeded,
-    options,
-    finalElement,
-    config
-  )
+function flattenHeadings(headings) {
+  if (!Array.isArray(headings)) {
+    return headings;
+  }
+  return [].concat(...headings.map(flattenHeadings));
 }
 
-function findClosestScrollableElement(_elem) {
-  const { parentNode } = _elem
-  if (!parentNode) return null
+function slugifyHeadings(headings) {
+  const slugger = new GithubSlugger();
 
-  if (
-    parentNode.scrollHeight > parentNode.clientHeight ||
-    parentNode.scrollWidth > parentNode.clientWidth
-  ) {
-    return parentNode
-  } else {
-    return findClosestScrollableElement(parentNode)
-  }
+  return headings.map(heading => {
+    // n.b. mutation is required here unfortunately
+    // eslint-disable-next-line no-param-reassign
+    heading.id = slugger.slug(heading.title);
+    return heading;
+  });
 }
 
-export class SidebarNavItem extends Component {
-  constructor() {
-    super()
-
-    this.activeNavItem = null
-  }
-
-  componentDidMount() {
-    this.scrollIntoViewIfNeeded()
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return this.props.isActive !== nextProps.isActive
-  }
-
-  componentDidUpdate() {
-    this.scrollIntoViewIfNeeded()
-  }
-
-  scrollIntoViewIfNeeded() {
-    if (this.props.isActive) {
-      if (this.activeNavItem.scrollIntoViewIfNeeded) {
-        this.activeNavItem.scrollIntoViewIfNeeded()
-      } else {
-        scrollIntoViewIfNeeded(this.activeNavItem)
-      }
-    }
-  }
-
-  render() {
-    const {item, updateSelected, isActive} = this.props
-
+export function SidebarNavItem({ item }) {
+  const href = `#${item.id}`;
+  const ampOn = `tap:AMP.navigateTo(url='${href}', target=_top)`;
+  if (item.level === 2) {
     return (
-      <a href={`#${convertToSnakeCase(item)}`} onClick={updateSelected} className={isActive ? 'active' : ''} ref={ref => (this.activeNavItem = ref)}>
-        { item }
-
+      <li>
+        <a on={ampOn} className="documentation__sidebar-heading f5">
+          {item.title}
+        </a>
         <style jsx>{`
-          a {
-            display: flex;
-            align-items: center;
-            font-size: 1.4rem;
-            color: #000000;
-            text-decoration: none;
-            margin-left: -56px;
-            padding: 6px 0;
-            padding-left: 56px;
-            position: relative;
-            flex: 1 0 auto;
+          li {
+            list-style: none;
           }
-
-          a.active {
-            font-weight: 500;
-          }
-
-          a:after {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 4px;
-            height: 100%;
-            transition: border-width 0.2s ease;
-          }
-
-          a.active:after {
-            border-left: 4px solid #000;
-            padding-left: 52px;
-          }
-
-          a:not(.active):hover:after {
-            border-left: 4px solid #DDDDDD;
-            padding-left: 52px;
-          }
-        `}</style>
-      </a>
-    )
-  }
-}
-
-export default class Sidebar extends React.Component {
-  render() {
-    return (
-      <div className="documentation__sidebar">
-        <nav>
-          <span className="documentation__sidebar-heading">Getting Started</span>
-          {
-            navElements.map((item, i) => (
-              <SidebarNavItem key={i} item={item} updateSelected={() => this.props.updateSelected(`#${convertToSnakeCase(item)}`)} isActive={this.props.currentSelection === `#${convertToSnakeCase(item)}`} />
-            ))
-          }
-        </nav>
-
-        <style jsx>{`
-          .documentation__sidebar {
-            width: 312px;
-            flex: 0 0 auto;
-            position: relative;
-            padding-right: 56px;
-          }
-
-          .documentation__sidebar nav {
-            position: fixed;
-            overflow-y: scroll;
-            display: flex;
-            flex-direction: column;
-            width: 256px;
-            height: calc(100vh - 144px);
-            padding: 6px 0 56px 56px;
-          }
-
           .documentation__sidebar-heading {
-            color: #999999;
+            display: inline-block;
+            margin-top: 1rem;
+            margin-bottom: 4px;
+            color: #999;
             text-transform: uppercase;
-            font-size: 1.2rem;
-            margin-bottom: 12px;
           }
-
-          .documentation__sidebar nav a {
+          a {
+            cursor: pointer;
           }
-
-          .documentation__sidebar nav a.active {
-            font-weight: 600;
+          a:hover {
+            color: gray;
           }
-
         `}</style>
-    </div>
-    )
+      </li>
+    );
   }
+
+  let listStyle = '';
+  switch (item.level) {
+    case 3:
+      listStyle = 'padding: 5px 3px 5px 0; font-size: 15px;';
+      break;
+    case 4:
+      listStyle = 'padding: 3px 3px 3px 15px; font-size: 14px; color: #666;';
+      break;
+    case 5:
+      listStyle = 'padding: 2px 3px 2px 30px; font-size: 13px; color: #666;';
+      break;
+    case 6:
+      listStyle = 'padding: 2px 3px 2px 45px; font-size: 13px; color: #666;';
+      break;
+    default:
+      break;
+  }
+
+  return (
+    <li>
+      <a on={ampOn} className="f-reset">
+        {item.title}
+      </a>
+      <style jsx>{`
+        li {
+          list-style: none;
+        }
+        a {
+          cursor: pointer;
+          display: block;
+          color: inherit;
+          line-height: 1.4;
+          margin: 0.4rem 0;
+          ${listStyle};
+        }
+        a:hover {
+          color: gray;
+        }
+        a.active {
+          font-weight: 600;
+          color: #0070f3;
+        }
+      `}</style>
+    </li>
+  );
+}
+
+export function SidebarNavItemContainer({ headings }) {
+  if (Array.isArray(headings)) {
+    return (
+      <ul>
+        {headings.map((item, i) => {
+          if (Array.isArray(item)) {
+            return (
+              <li key={i}>
+                <SidebarNavItemContainer headings={item} />
+              </li>
+            );
+          }
+          return <SidebarNavItemContainer key={i} headings={item} />;
+        })}
+        <style jsx>{`
+          ul {
+            margin: 0 0 0.5rem 0;
+            padding: 0;
+          }
+        `}</style>
+      </ul>
+    );
+  }
+
+  return <SidebarNavItem item={headings} />;
+}
+
+export default function Sidebar({ headings, mobile, desktop }) {
+  slugifyHeadings(flattenHeadings(headings));
+
+  return (
+    <>
+      {mobile && (
+        <>
+          <Header
+            shadow
+            zIndex={999}
+            offset={64 + 32}
+            height={{
+              desktop: 0,
+              mobile: 96
+            }}
+          >
+            <Navbar />
+            <label htmlFor="dropdown-input" className="dropdown-toggle">
+              <input id="dropdown-input" type="checkbox" />
+              <div className="docs-select f5 fw6">
+                <Container>
+                  <span
+                    style={{
+                      verticalAlign: 'middle',
+                      marginRight: '0.2rem',
+                      display: 'inline-block',
+                      lineHeight: '1rem'
+                    }}
+                  >
+                    <ArrowRight />
+                  </span>
+                  Menu
+                </Container>
+              </div>
+              <div className="documentation__sidebar docs-dropdown">
+                <Container>
+                  <nav>
+                    <SidebarNavItemContainer headings={headings} />
+                  </nav>
+                </Container>
+              </div>
+            </label>
+          </Header>
+        </>
+      )}
+      <style jsx>{`
+        #dropdown-input {
+          display: none;
+        }
+        .dropdown-toggle {
+          width: 100%;
+          display: block;
+        }
+        .docs-select {
+          height: 3rem;
+          width: 100%;
+          border-top: 1px solid #f5f5f5;
+          line-height: 3rem;
+          text-align: left;
+          cursor: pointer;
+        }
+        .docs-select img {
+          vertical-align: middle;
+          margin-top: -2px;
+        }
+        .docs-dropdown {
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 100%;
+          bottom: 100%;
+          background: white;
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+          transition: bottom 0.5s ease;
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+        #dropdown-input:checked ~ .docs-dropdown {
+          bottom: -50vh;
+        }
+        .documentation__sidebar nav {
+          padding-left: 28px;
+        }
+      `}</style>
+      <style jsx global>{`
+        :global(.target.docs-anchor-target) {
+          margin-top: -208px;
+          padding-top: 208px;
+        }
+        // only show in mobile mode
+        @media screen and (min-width: 640px) {
+          .dropdown-toggle {
+            height: 0px;
+            overflow: hidden;
+          }
+        }
+      `}</style>
+
+      {desktop && (
+        <div className="documentation__sidebar desktop">
+          <nav>
+            <SidebarNavItemContainer headings={headings} />
+          </nav>
+        </div>
+      )}
+      <style jsx>{`
+        .documentation__sidebar.desktop {
+          width: 312px;
+          flex: 0 0 auto;
+          position: relative;
+          padding-right: 3rem;
+        }
+        .documentation__sidebar.desktop nav {
+          position: fixed;
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+          display: flex;
+          flex-direction: column;
+          width: 288px;
+          padding: 2rem 1rem 0 0;
+          height: calc(100vh - 64px);
+        }
+        @media screen and (max-width: 1024px) {
+          .documentation__sidebar.desktop nav {
+            width: 33%;
+          }
+        }
+        // CSS only media query for mobile + SSR
+        @media screen and (max-width: 640px) {
+          .documentation__sidebar.desktop {
+            display: none;
+          }
+          .documentation__sidebar nav {
+            position: unset;
+            height: unset;
+            width: 100%;
+          }
+        }
+      `}</style>
+    </>
+  );
 }

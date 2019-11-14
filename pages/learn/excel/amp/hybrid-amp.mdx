@@ -1,0 +1,37 @@
+import Layout from '../../../../components/learn/Layout';
+
+export const meta = {
+  title: 'Build a hybrid AMP Page',
+  courseId: 'excel',
+  lessonId: 'amp',
+  stepId: 'hybrid-amp',
+  question: {
+    answers: [
+      'Set hybrid in your next.config.js',
+      'Put it in the hybrid-amp folder',
+      'Add ?amp=1 to your URL',
+      'Add `?hybrid=true`'
+    ],
+    correctAnswer: 'Add ?amp=1 to your URL'
+  }
+};
+
+You can also create a hybrid AMP page by adding `amp: 'hybrid'`:
+
+```jsx
+// pages/index.js
+import { useAmp } from 'next/amp';
+
+export const config = { amp: 'hybrid' };
+
+export default function Index(props) {
+  const isAmp = useAmp();
+  return <p>Welcome to the {isAmp ? 'AMP' : 'normal'} version of the Index page!!</p>;
+}
+```
+
+Then to view the AMP version of the page add `?amp=1` to the URL. `useAmp()` is a hook to know if any component, not only the page, is being used for AMP.
+
+How do you visit the AMP version of an AMP page?
+
+export default ({ children }) => <Layout meta={meta}>{children}</Layout>;
